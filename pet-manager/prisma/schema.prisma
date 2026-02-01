@@ -4,6 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL") 
 }
 
 // --- MODELAGEM DAS TABELAS ---
@@ -41,7 +42,7 @@ model Pet {
 
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  // onDelete: Cascade -> Se apagar o usuário, apaga os pets dele (evita pet orfão no banco)
+  // onDelete: Cascade -> evita pet orfão no banco
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
