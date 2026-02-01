@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  # Serviço do Banco de Dados
+  postgres:
+    image: postgres:15-alpine
+    container_name: pet-manager-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: adminpassword
+      POSTGRES_DB: petmanager
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - pet-network
+
+  adminer:
+    image: adminer
+    container_name: pet-manager-adminer
+    ports:
+      - "8080:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+    depends_on:
+      - postgres
+    networks:
+      - pet-network
+
+volumes:
+  postgres_data:
+
+networks:
+  pet-network:
+    driver: bridge
