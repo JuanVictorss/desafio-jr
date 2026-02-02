@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getPets } from "@/actions/get-pets";
-import { deletePet } from "@/actions/delete-pet";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -12,8 +11,8 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  // Busca os pets (Task #16)
-  const pets = await getPets();
+  const termoDeBusca = "rex";
+  const pets = await getPets(termoDeBusca);
 
   return (
     <div className="flex h-screen flex-col items-center justify-center bg-gray-100 gap-4">
@@ -23,44 +22,29 @@ export default async function DashboardPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           
-          {/* --- ÁREA DE TESTE DA TASK #15 --- */}
-          <div className="p-4 border-2 border-dashed border-yellow-400 rounded bg-yellow-50">
-            <h3 className="font-bold text-yellow-800 mb-2">🧪 Área de Teste (Task #15)</h3>
-            <p className="text-sm text-yellow-700 mb-4">
-              Clique abaixo para criar um pet fixo e validar se o banco está salvando.
-            </p>
-            
-<form
-  action={async () => {
-    "use server";
-    const idParaDeletar = "50a663bb-3114-42c2-8361-49597150e02e"; 
-    
-    console.log("--> Testando SOFT DELETE...");
-    
-    const res = await deletePet(idParaDeletar);
-    
-    console.log("Resultado:", res);
-  }}
->
-  <Button type="submit" variant="destructive" className="w-full">
-    Testar Exclusão (Soft Delete) 🗑️
-  </Button>
-</form>
-
+          {/* Aviso visual do Teste */}
+          <div className="bg-blue-50 p-3 rounded border border-blue-200 text-blue-800 text-sm">
+            🔍 <strong>Teste de Busca (Task #19):</strong><br/>
+            Filtrando resultados por: <span className="font-bold">"{termoDeBusca}"</span>
           </div>
-          {/* ---------------------------------- */}
 
-          {/* --- LISTAGEM (TASK #16) --- */}
+          {/* LISTAGEM DE RESULTADOS */}
           <div className="border rounded p-4 bg-white">
-            <h3 className="font-bold mb-2">Meus Pets ({pets.length})</h3>
+            <h3 className="font-bold mb-2">Resultados ({pets.length})</h3>
+            
             {pets.length === 0 ? (
-              <p className="text-gray-500 text-sm">Nenhum pet encontrado.</p>
+              <p className="text-gray-500 text-sm">
+                Nenhum pet encontrado com "{termoDeBusca}".
+              </p>
             ) : (
               <ul className="space-y-2">
                 {pets.map((pet) => (
-                  <li key={pet.id} className="p-2 bg-gray-50 rounded border flex justify-between">
-                    <span>🐾 <strong>{pet.name}</strong> ({pet.type})</span>
-                    <span className="text-xs text-gray-400 self-center">
+                  <li key={pet.id} className="p-2 bg-gray-50 rounded border flex justify-between items-center">
+                    <div>
+                        <span>🐾 <strong>{pet.name}</strong></span>
+                        <span className="text-xs text-gray-500 block">Dono: {pet.user?.name}</span>
+                    </div>
+                    <span className="text-xs text-gray-400">
                       {new Date(pet.createdAt).toLocaleDateString()}
                     </span>
                   </li>
