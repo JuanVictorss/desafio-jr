@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getPets } from "@/actions/get-pets";
 import { createPet } from "@/actions/create-pet"; // <--- Importe a action da Task #15
+import { updatePet } from "@/actions/update-pet";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -33,20 +34,24 @@ export default async function DashboardPage() {
 <form
   action={async () => {
     "use server";
-    console.log("--> TENTANDO CRIAR PET..."); // Log 1: Iniciou
     
-    const resultado = await createPet({
-      name: "Rex do Teste " + Math.floor(Math.random() * 100),
+    // COLE O ID DO SEU PET AQUI DENTRO DAS ASPAS 👇
+    const idDoPet = "50a663bb-3114-42c2-8361-49597150e02e"; 
+    
+    console.log("--> Testando UPDATE...");
+    
+    const res = await updatePet(idDoPet, {
+      name: "Rex EVOLUÍDO por outraa pessoa " + Math.floor(Math.random() * 100),
       type: "Cachorro",
-      age: 3,
-      breed: "Vira-lata",
+      age: 10,
+      breed: "Super Cão"
     });
-
-    console.log("--> RESULTADO:", resultado); // Log 2: Mostra erro ou sucesso
+    
+    console.log(res);
   }}
 >
-  <Button type="submit" className="w-full bg-yellow-600 hover:bg-yellow-700">
-    Criar Pet de Teste (Mock)
+  <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
+    Testar Atualização (Update)
   </Button>
 </form>
           </div>
