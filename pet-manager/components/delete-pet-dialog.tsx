@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { deletePet } from "@/actions/delete-pet";
 import { Loader2 } from "lucide-react";
+// 👇 Importação do Toast
+import { toast } from "sonner";
 
 import {
   AlertDialog,
@@ -29,11 +31,17 @@ export const DeletePetDialog = ({ petId, petName, children }: DeletePetDialogPro
   const onDelete = async () => {
     setIsPending(true);
     try {
-      await deletePet(petId);
+      const result = await deletePet(petId);
+
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        toast.success(`O pet ${petName} foi removido com sucesso.`);
+      }
 
     } catch (error) {
       console.error(error);
-      alert("Erro ao deletar.");
+      toast.error("Erro ao deletar pet.");
     } finally {
       setIsPending(false);
     }
