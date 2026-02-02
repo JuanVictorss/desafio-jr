@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { getPets } from "@/actions/get-pets";
 import { PetCard } from "@/components/pet-card";
+import { PetModal } from "@/components/pet-modal";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -11,8 +12,7 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  // Removi o termo fixo "rex" para você ver TODOS os pets e testar o grid
-  // Se quiser testar a busca, pode passar a string aqui dentro.
+  // Busca os pets do banco (pode passar string de busca se quiser testar depois)
   const pets = await getPets(); 
 
   return (
@@ -53,17 +53,19 @@ export default async function DashboardPage() {
             <p className="text-gray-500 text-sm">Gerencie os animais cadastrados no sistema.</p>
           </div>
           
-          {/* Botão de Adicionar (Ainda sem função, mas visualmente pronto) */}
-          <Button className="bg-brand-green text-brand-dark hover:bg-lime-400 font-bold shadow-sm">
-            + Novo Pet
-          </Button>
+          {/* Botão de Adicionar COM O MODAL */}
+          <PetModal>
+            <Button className="bg-brand-green text-brand-dark hover:bg-lime-400 font-bold shadow-sm">
+              + Novo Pet
+            </Button>
+          </PetModal>
         </div>
 
-        {/* 3. GRID DE CARDS (Task #20) */}
+        {/* 3. GRID DE CARDS */}
         {pets.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-2xl border-2 border-dashed border-gray-200">
             <p className="text-gray-500 text-lg">Nenhum pet encontrado.</p>
-            <p className="text-sm text-gray-400">Clique em "Novo Pet" para começar.</p>
+            <p className="text-sm text-gray-400">Clique em "+ Novo Pet" para começar.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -72,8 +74,6 @@ export default async function DashboardPage() {
                 key={pet.id} 
                 pet={pet} 
                 currentUserId={session.user.id} 
-                // Removemos os console.log daqui para evitar erro de serialização
-                // Vamos implementar as ações reais na próxima Task
               />
             ))}
           </div>
