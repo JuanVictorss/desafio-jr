@@ -10,21 +10,20 @@ import {
   PawPrint 
 } from "lucide-react";
 import { Button } from "./ui/button";
+import { PetModal } from "./pet-modal";
 
-// Tipagem estendida para incluir o dono
 interface PetWithUser extends Pet {
   user: User;
 }
 
 interface PetCardProps {
   pet: PetWithUser;
-  currentUserId?: string; // Para saber se mostramos os botões
-  onEdit?: (pet: PetWithUser) => void;   // Função que abrirá o modal (futuro)
-  onDelete?: (id: string) => void;       // Função que abrirá o dialog (futuro)
+  currentUserId?: string; 
+  onEdit?: (pet: PetWithUser) => void;   
+  onDelete?: (id: string) => void;     
 }
 
 export const PetCard = ({ pet, currentUserId, onEdit, onDelete }: PetCardProps) => {
-  // Verifica se o usuário logado é o dono
   const isOwner = currentUserId === pet.userId;
 
   return (
@@ -69,25 +68,26 @@ export const PetCard = ({ pet, currentUserId, onEdit, onDelete }: PetCardProps) 
         </div>
 
         {/* AÇÕES (Só aparecem se for o dono) */}
-        {isOwner && (
+{isOwner && (
           <div className="flex gap-2 mt-2 pt-2">
             
-            {/* Botão Editar (Futuro Modal) */}
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="flex-1 text-blue-600 border-blue-100 hover:bg-blue-50 hover:text-blue-700"
-              onClick={() => onEdit?.(pet)}
-            >
-              <Pencil size={14} className="mr-2" />
-              Editar
-            </Button>
+            {/* ENVOLVA O BOTÃO DE EDITAR COM O MODAL */}
+            <PetModal pet={pet}>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex-1 text-blue-600 border-blue-100 hover:bg-blue-50"
+              >
+                <Pencil size={14} className="mr-2" />
+                Editar
+              </Button>
+            </PetModal>
 
-            {/* Botão Excluir (Futuro Dialog) */}
+            {/* O botão Excluir fica para a próxima Task */}
             <Button 
               variant="outline" 
               size="sm" 
-              className="flex-1 text-red-600 border-red-100 hover:bg-red-50 hover:text-red-700"
+              className="flex-1 text-red-600 border-red-100 hover:bg-red-50"
               onClick={() => onDelete?.(pet.id)}
             >
               <Trash2 size={14} className="mr-2" />
