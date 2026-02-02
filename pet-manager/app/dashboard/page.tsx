@@ -1,8 +1,8 @@
 import { auth, signOut } from "@/auth";
 import { redirect } from "next/navigation";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getPets } from "@/actions/get-pets";
+import { PetCard } from "@/components/pet-card";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -11,46 +11,23 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const termoDeBusca = "rex";
-  const pets = await getPets(termoDeBusca);
+  // Removi o termo fixo "rex" para você ver TODOS os pets e testar o grid
+  // Se quiser testar a busca, pode passar a string aqui dentro.
+  const pets = await getPets(); 
 
   return (
-    <div className="flex h-screen flex-col items-center justify-center bg-gray-100 gap-4">
-      <Card className="w-[500px] shadow-xl">
-        <CardHeader>
-          <CardTitle>Dashboard: {session.user?.name}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          
-          {/* Aviso visual do Teste */}
-          <div className="bg-blue-50 p-3 rounded border border-blue-200 text-blue-800 text-sm">
-            🔍 <strong>Teste de Busca (Task #19):</strong><br/>
-            Filtrando resultados por: <span className="font-bold">"{termoDeBusca}"</span>
-          </div>
-
-          {/* LISTAGEM DE RESULTADOS */}
-          <div className="border rounded p-4 bg-white">
-            <h3 className="font-bold mb-2">Resultados ({pets.length})</h3>
-            
-            {pets.length === 0 ? (
-              <p className="text-gray-500 text-sm">
-                Nenhum pet encontrado com "{termoDeBusca}".
-              </p>
-            ) : (
-              <ul className="space-y-2">
-                {pets.map((pet) => (
-                  <li key={pet.id} className="p-2 bg-gray-50 rounded border flex justify-between items-center">
-                    <div>
-                        <span>🐾 <strong>{pet.name}</strong></span>
-                        <span className="text-xs text-gray-500 block">Dono: {pet.user?.name}</span>
-                    </div>
-                    <span className="text-xs text-gray-400">
-                      {new Date(pet.createdAt).toLocaleDateString()}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
+    <div className="min-h-screen bg-gray-50">
+      
+      {/* 1. TOPO (HEADER) */}
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-brand-purple rounded-lg flex items-center justify-center text-white font-bold">
+              IO
+            </div>
+            <h1 className="text-xl font-bold text-gray-800">
+              Dashboard <span className="text-gray-400 font-normal">| {session.user?.name}</span>
+            </h1>
           </div>
 
           <form
@@ -59,12 +36,49 @@ export default async function DashboardPage() {
               await signOut({ redirectTo: "/login" });
             }}
           >
-            <Button variant="destructive" className="w-full mt-4">
-              Sair (Logout)
+            <Button variant="ghost" className="text-red-600 hover:text-red-700 hover:bg-red-50">
+              Sair
             </Button>
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </header>
+
+      {/* 2. CONTEÚDO PRINCIPAL */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        {/* Cabeçalho da Seção */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+          <div>
+            <h2 className="text-2xl font-bold text-brand-dark">Meus Pets</h2>
+            <p className="text-gray-500 text-sm">Gerencie os animais cadastrados no sistema.</p>
+          </div>
+          
+          {/* Botão de Adicionar (Ainda sem função, mas visualmente pronto) */}
+          <Button className="bg-brand-green text-brand-dark hover:bg-lime-400 font-bold shadow-sm">
+            + Novo Pet
+          </Button>
+        </div>
+
+        {/* 3. GRID DE CARDS (Task #20) */}
+        {pets.length === 0 ? (
+          <div className="text-center py-20 bg-white rounded-2xl border-2 border-dashed border-gray-200">
+            <p className="text-gray-500 text-lg">Nenhum pet encontrado.</p>
+            <p className="text-sm text-gray-400">Clique em "Novo Pet" para começar.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {pets.map((pet) => (
+              <PetCard 
+                key={pet.id} 
+                pet={pet} 
+                currentUserId={session.user.id} 
+                // Removemos os console.log daqui para evitar erro de serialização
+                // Vamos implementar as ações reais na próxima Task
+              />
+            ))}
+          </div>
+        )}
+      </main>
     </div>
   );
 }
