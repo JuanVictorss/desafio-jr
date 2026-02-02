@@ -9,6 +9,8 @@ import { PetSchema } from "@/schemas";
 import { createPet } from "@/actions/create-pet";
 import { updatePet } from "@/actions/update-pet";
 import { Pet } from "@prisma/client";
+// 👇 Importação do Toast
+import { toast } from "sonner"; 
 
 import {
   Dialog,
@@ -69,14 +71,17 @@ export const PetModal = ({ children, pet }: PetModalProps) => {
       }
 
       if (response.error) {
-        alert(response.error); 
+        // ❌ Erro visual
+        toast.error(response.error);
       } else {
+        // ✅ Sucesso visual
+        toast.success(pet ? "Pet atualizado com sucesso!" : "Pet cadastrado com sucesso!");
         setOpen(false); 
         if (!pet) reset(); 
       }
     } catch (error) {
       console.error(error);
-      alert("Erro inesperado.");
+      toast.error("Ocorreu um erro inesperado.");
     } finally {
       setIsPending(false);
     }
@@ -127,7 +132,7 @@ export const PetModal = ({ children, pet }: PetModalProps) => {
               )}
             </div>
 
-            {/* Campo TIPO (Select do Shadcn precisa de controle manual) */}
+            {/* Campo TIPO */}
             <div className="grid gap-2">
               <Label htmlFor="type">Tipo</Label>
               <Select
