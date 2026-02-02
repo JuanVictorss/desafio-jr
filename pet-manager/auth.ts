@@ -8,6 +8,19 @@ import { LoginSchema } from "@/schemas";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   ...authConfig,
+  
+  callbacks: {
+    async session({ session, token }) {
+      if (token.sub && session.user) {
+        session.user.id = token.sub;
+      }
+      return session;
+    },
+    async jwt({ token }) {
+      return token;
+    }
+  },
+
   providers: [
     Credentials({
       async authorize(credentials) {
@@ -26,7 +39,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       },
     }),
   ],
-  // --- BÔNUS: Log de Auditoria ---
+  // Log de Auditoria
   events: {
     async signIn({ user }) {
       if (user.id) {
