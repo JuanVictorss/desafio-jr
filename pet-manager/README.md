@@ -1,36 +1,219 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🐾 Interato Pet Manager
 
-## Getting Started
+Sistema de gerenciamento de pets desenvolvido como **desafio técnico para a vaga de Desenvolvedor Fullstack Jr na Interato**.
 
-First, run the development server:
+O projeto consiste em uma **Dashboard (SPA)** segura onde usuários podem **cadastrar, listar e gerenciar seus animais de estimação**, com forte foco em **segurança**, **experiência do usuário (UX)** e **boas práticas de código**.
+
+![Preview](./public/preview.png)
+
+---
+
+## 🚀 Tecnologias e Ferramentas
+
+### 🧠 Core
+
+* **Next.js 16.1** (App Router)
+* **React 19**
+
+### 🎨 Estilização & UI
+
+* **Tailwind CSS v4**
+* **Shadcn UI**
+* **Lucide Icons**
+* **Sonner** (Toasts)
+
+### 🗄️ Backend & Banco de Dados
+
+* **PostgreSQL**
+* **Prisma ORM**
+
+### 🔐 Autenticação & Segurança
+
+* **NextAuth.js v5 (Beta)** — Strategy: Credentials
+* **bcryptjs** — Hash de senhas
+
+### ✅ Validação & Forms
+
+* **Zod**
+* **React Hook Form**
+
+### ⚙️ Infraestrutura
+
+* **Docker**
+* **Docker Compose**
+
+### ⚡ UX & Performance
+
+* **use-debounce** — Otimização de buscas
+
+---
+
+## ⚙️ Funcionalidades Implementadas
+
+* ✅ **Autenticação Completa**
+
+  * Cadastro e Login seguros
+  * Senhas criptografadas com bcrypt
+
+* ✅ **CRUD de Pets**
+
+  * Criar, listar, editar e excluir pets
+
+* ✅ **Busca Inteligente**
+
+  * Filtro em tempo real com debounce
+  * Ignora maiúsculas/minúsculas e acentos
+
+* ✅ **Segurança de Dados**
+
+  * 🔒 **Soft Delete:** pets excluídos não são removidos do banco (`isActive: false`)
+  * 🔐 **Row Level Security:** usuários só podem editar/excluir seus próprios pets (validação no backend)
+
+* ✅ **Auditoria de Ações**
+
+  * Logs automáticos em `AuditLog` para:
+
+    * Login
+    * Criação
+    * Atualização
+    * Exclusão
+
+---
+
+## 🏗️ Decisões Arquiteturais
+
+### 1️⃣ Server Actions (Next.js)
+
+Foi utilizado o **Server Actions** em vez de rotas de API tradicionais.
+
+**Benefícios:**
+
+* Tipagem de ponta a ponta (type safety)
+* Menos boilerplate
+* Redução do uso de `useEffect`
+* Melhor organização entre frontend e backend
+
+---
+
+### 2️⃣ Soft Delete (`isActive`)
+
+Nenhum dado é removido fisicamente do banco de dados.
+
+**Vantagens:**
+
+* Preserva histórico
+* Garante integridade referencial
+* Permite futuras funcionalidades como:
+
+  * Lixeira
+  * Restauração de registros
+
+---
+
+### 3️⃣ Busca Insensitive (Acentos)
+
+O PostgreSQL é sensível a acentos por padrão.
+
+Para melhorar a UX **sem depender de extensões como `unaccent`**, as strings são **normalizadas na camada de serviço (Server Actions)**.
+
+Essa abordagem é performática e suficiente para o escopo do projeto.
+
+---
+
+## 📦 Como Rodar o Projeto
+
+### 📋 Pré-requisitos
+
+* **Node.js v18+**
+* **Docker** (opcional, mas recomendado para o banco de dados)
+
+---
+
+### ▶️ Passo a Passo
+
+#### 1️⃣ Clone o repositório
+
+```bash
+git clone https://github.com/Juanvictorss/desafio-jr.git
+cd desafio-jr/pet-manager
+```
+
+---
+
+#### 2️⃣ Instale as dependências
+
+```bash
+npm install
+```
+
+---
+
+#### 3️⃣ Configure as variáveis de ambiente
+
+Crie um arquivo **`.env`** na raiz do projeto:
+
+```env
+# Banco de dados (Docker)
+# user: admin | pass: adminpassword | db: petmanager
+DATABASE_URL="postgresql://admin:adminpassword@localhost:5432/petmanager?schema=public"
+
+# NextAuth
+AUTH_SECRET="chave-secreta-super-segura-123"
+```
+
+---
+
+#### 4️⃣ Suba o banco de dados (Docker)
+
+```bash
+docker-compose up -d
+```
+
+* PostgreSQL: **localhost:5432**
+* Adminer (UI): **[http://localhost:8080](http://localhost:8080)**
+
+---
+
+#### 5️⃣ Execute as migrations
+
+```bash
+npx prisma migrate dev
+```
+
+---
+
+#### 6️⃣ Inicie a aplicação
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Acesse:
+👉 **[http://localhost:3000](http://localhost:3000)**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Próximos Passos (Roadmap)
 
-## Learn More
+O projeto atual atende aos requisitos do MVP. Para uma versão 2.0, a infraestrutura de banco de dados já está preparada para suportar:
 
-To learn more about Next.js, take a look at the following resources:
+- [ ] **Perfil Completo:** Cadastro de telefone, documento e endereço do usuário.
+- [ ] **Detalhes do Pet:** Upload de fotos (`photoUrl`), porte (`size`) e descrição detalhada.
+- [ ] **Recuperação de Senha:** Fluxo de "Esqueci minha senha".
+- [ ] **Acessibilidade:** Implementação de modo alto contraste e revisão WCAG.
+- [ ] **Dashboards:** Gráficos de quantidade de pets por tipo/raça.
+- [ ] **Testes:** Implementação de testes automatizados (Unitários e de Integração).
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📄 Licença
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Este projeto foi desenvolvido **exclusivamente para fins de avaliação técnica**.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 👨‍💻 Autor
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Desenvolvido por **JUAN VICTOR SOUZA SILVA** 
+- 📧 **E-mail:** juanvictoficial@gmail.com
+- 📱 **WhatsApp:** (87)99142-6531
+- 🔗 **Linkedin:** [linkedin.com/juanvictor-ss/](https://www.linkedin.com/in/juanvictor-ss/)
