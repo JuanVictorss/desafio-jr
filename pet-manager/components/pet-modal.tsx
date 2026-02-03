@@ -48,7 +48,7 @@ export const PetModal = ({ children, pet }: PetModalProps) => {
     setValue,
     reset,
     formState: { errors },
-  } = useForm<z.infer<typeof PetSchema>>({
+  } = useForm({
     resolver: zodResolver(PetSchema),
     defaultValues: {
       name: pet?.name || "",
