@@ -51,7 +51,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
               details: "Login realizado via Credenciais (Email/Senha)"
             }
           })
-          console.log(`✅ Log de auditoria criado para usuário: ${user.email}`)
         } catch (error) {
           console.error("Erro ao criar log de auditoria:", error)
         }

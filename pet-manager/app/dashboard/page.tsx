@@ -91,7 +91,7 @@ export default async function DashboardPage(props: DashboardProps) {
               <PetCard 
                 key={pet.id} 
                 pet={pet} 
-                currentUserId={session.user.id} 
+                currentUserId={session?.user?.id || ""}
               />
             ))}
           </div>
